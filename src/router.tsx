@@ -12,10 +12,12 @@ import {
 import { trpc } from "./trpc";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { type AppRouter } from "../server/trpc";
+import { whitelistSafeInput } from "@unhead/shared";
+import { type Head } from "@unhead/schema";
 
 const routeTree = rootRoute.addChildren([indexRoute, aboutRoute]);
 
-export const createRouter = (head: ReturnType<typeof createHead>) => {
+export const createRouter = (head: ReturnType<typeof createHead<Head>>) => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -43,7 +45,10 @@ export const createRouter = (head: ReturnType<typeof createHead>) => {
     routeTree,
     context: {
       updateHead: (metadata) => {
-        head.push(metadata);
+        head.push(metadata, {
+          // @ts-expect-error blame unhead
+          transform: whitelistSafeInput,
+        });
       },
       client: trpcClient,
     },

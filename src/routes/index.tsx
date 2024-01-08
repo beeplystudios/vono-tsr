@@ -8,6 +8,12 @@ export const indexRoute = new Route({
   beforeLoad: ({ context }) => {
     context.updateHead({
       title: "Home",
+      meta: [
+        {
+          name: "description",
+          content: "This is the content",
+        },
+      ],
     });
   },
   loader: ({ context }) => {

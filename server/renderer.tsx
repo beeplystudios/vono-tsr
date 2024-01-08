@@ -1,14 +1,14 @@
 import { createMemoryHistory } from "@tanstack/react-router";
 import { StartServer } from "@tanstack/react-router-server/server";
-import { renderSSRHead } from "@unhead/ssr";
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import React from "react";
 import { createHeadCore } from "unhead";
 import { createRouter } from "../src/router";
-import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { AppRouter } from "./trpc";
-
 // @ts-expect-error idk
-const dev = import.meta.env.DEV;
+import manifest from "#vono/manifest";
+
+const dev = true;
 
 const reactRefresh = `
 import RefreshRuntime from 'http://localhost:5173/@react-refresh'
@@ -18,12 +18,21 @@ window.$RefreshSig$ = () => (type) => type
 window.__vite_plugin_react_preamble_installed__ = true`;
 
 const Shell = (props: {
-  head: string;
+  head: React.ReactNode;
   scripts: React.ReactNode;
   children: React.ReactNode;
 }) => (
   <html>
-    <head dangerouslySetInnerHTML={{ __html: props.head }} />
+    <head>
+      <script type="module" src="/@vite/client" />
+      {dev && (
+        <script
+          type="module"
+          dangerouslySetInnerHTML={{ __html: reactRefresh }}
+        />
+      )}
+      {props.head}
+    </head>
     <body>
       <div id="app">{props.children}</div>
       {props.scripts}
@@ -59,24 +68,30 @@ export default async function render(url: string) {
 
   const { renderToReadableStream } = await import("react-dom/server.browser");
 
-  let headTags = "";
+  const tags = await head.resolveTags();
 
-  if (dev) {
-    head.push({
-      script: [{ type: "module", src: "/@vite/client" }],
-    });
-  }
-
-  const payload = await renderSSRHead(head);
-
-  headTags = payload.headTags;
-
-  headTags += `<script type="module">${reactRefresh}</script>`;
+  const elements = tags.map((tag) =>
+    React.createElement(tag.tag, {
+      ...tag.props,
+      children: tag.textContent,
+    })
+  );
 
   return renderToReadableStream(
     <Shell
-      scripts={<script type="module" src={"src/entry.client.tsx"} />}
-      head={headTags}
+      scripts={
+        <script
+          type="module"
+          src={"/" + manifest["src/entry.client.tsx"].file}
+        />
+      }
+      head={
+        <>
+          {elements.map((e) => (
+            <>{e}</>
+          ))}
+        </>
+      }
     >
       <StartServer router={router} />
     </Shell>
