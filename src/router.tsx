@@ -1,20 +1,15 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Router } from "@tanstack/react-router";
-import { indexRoute } from "./routes";
-import { rootRoute } from "./routes/root";
-import { aboutRoute } from "./routes/about";
-import { type createHead } from "unhead";
-import {
-  QueryClient,
-  QueryClientProvider,
-  dehydrate,
-  hydrate,
-} from "@tanstack/react-query";
-import { trpc } from "./trpc";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
-import { type AppRouter } from "../server/trpc";
-import { whitelistSafeInput } from "@unhead/shared";
 import { type Head } from "@unhead/schema";
+import { whitelistSafeInput } from "@unhead/shared";
+import { type createHead } from "unhead";
+import { type AppRouter } from "../server/trpc";
+import { indexRoute } from "./routes";
+import { aboutRoute } from "./routes/about";
+import { rootRoute } from "./routes/root";
 import { streamingRoute } from "./routes/streaming";
+import { trpc } from "./trpc";
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -57,15 +52,6 @@ export const createRouter = (head: ReturnType<typeof createHead<Head>>) => {
       },
       client: trpcClient,
     },
-    dehydrate() {
-      return {
-        queryClientState: dehydrate(queryClient),
-      };
-    },
-    hydrate(dehydrated) {
-      hydrate(queryClient, dehydrated.queryClientState);
-    },
-
     Wrap: (props) => {
       return (
         <trpc.Provider client={trpcReactClient} queryClient={queryClient}>

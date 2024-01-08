@@ -58,6 +58,8 @@ export default async function render(url: string) {
         links: [
           httpBatchLink({
             url: "http://localhost:5173/trpc",
+
+            // later read cookies here
           }),
         ],
       }),
