@@ -36,6 +36,7 @@ export const indexRoute = new Route({
           Invalidate Query
         </button>
         <Link to="/about">Go to About</Link>
+        <Link to="/streaming">Go to Streaming</Link>
       </>
     );
   },

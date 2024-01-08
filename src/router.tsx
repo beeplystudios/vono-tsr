@@ -14,8 +14,13 @@ import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { type AppRouter } from "../server/trpc";
 import { whitelistSafeInput } from "@unhead/shared";
 import { type Head } from "@unhead/schema";
+import { streamingRoute } from "./routes/streaming";
 
-const routeTree = rootRoute.addChildren([indexRoute, aboutRoute]);
+const routeTree = rootRoute.addChildren([
+  indexRoute,
+  aboutRoute,
+  streamingRoute,
+]);
 
 export const createRouter = (head: ReturnType<typeof createHead<Head>>) => {
   const queryClient = new QueryClient({
