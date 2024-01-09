@@ -12,6 +12,7 @@ import { AppRouter } from "./trpc";
 import manifest from "#vono/manifest";
 import { renderToPipeableStream } from "react-dom/server";
 import { Transform } from "node:stream";
+import { Context as HonoContext } from "hono";
 
 const dev = true;
 
@@ -46,7 +47,9 @@ const Shell = (props: {
   </html>
 );
 
-export default async function render(url: string) {
+export async function render(ctx: HonoContext) {
+  const url = ctx.req.path;
+
   const head = createHeadCore();
   const router = createRouter(head);
 
