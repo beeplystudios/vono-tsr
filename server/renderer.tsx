@@ -20,7 +20,7 @@ import {
 } from "../src/lib/trpc";
 import { getCookie } from "hono/cookie";
 
-const dev = true;
+const dev = import.meta.env.DEV;
 
 const reactRefresh = `
 import RefreshRuntime from 'http://localhost:5173/@react-refresh'
@@ -37,12 +37,14 @@ const Shell = (props: {
 }) => (
   <html>
     <head>
-      <script type="module" src="/@vite/client" />
       {dev && (
-        <script
-          type="module"
-          dangerouslySetInnerHTML={{ __html: reactRefresh }}
-        />
+        <>
+          <script type="module" src="/@vite/client" />
+          <script
+            type="module"
+            dangerouslySetInnerHTML={{ __html: reactRefresh }}
+          />
+        </>
       )}
       {props.head}
     </head>

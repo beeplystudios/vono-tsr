@@ -9,7 +9,7 @@ import superjson from "superjson";
 import React from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 
-const TRPC_URL = "http://localhost:5173/trpc";
+const TRPC_URL = import.meta.env.VITE_API_URL + "/trpc";
 
 type Headers = Parameters<typeof httpBatchLink>[0]["headers"];
 
