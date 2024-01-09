@@ -11,7 +11,7 @@ import { AppRouter } from "./trpc";
 // @ts-expect-error idk
 import manifest from "#vono/manifest";
 import { renderToPipeableStream } from "react-dom/server";
-import { Transform } from "node:stream";
+import { Transform } from "stream";
 import { Context as HonoContext } from "hono";
 
 const dev = true;
