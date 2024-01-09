@@ -10,8 +10,8 @@ import { createRouter } from "../src/router";
 import { AppRouter } from "./trpc";
 // @ts-expect-error idk
 import manifest from "#vono/manifest";
-import { Readable, Transform } from "stream";
-import { ReadableStream as NodeReadableStream } from "node:stream/web";
+import { renderToPipeableStream } from "react-dom/server";
+import { Transform } from "node:stream";
 
 const dev = true;
 
@@ -74,8 +74,6 @@ export default async function render(url: string) {
 
   await router.load();
 
-  const { renderToReadableStream } = await import("react-dom/server.browser");
-
   const tags = await head.resolveTags();
 
   const elements = tags.map((tag) =>
@@ -85,7 +83,7 @@ export default async function render(url: string) {
     })
   );
 
-  const stream: NodeReadableStream = await renderToReadableStream(
+  const stream = renderToPipeableStream(
     <Shell
       scripts={
         <script
@@ -105,13 +103,8 @@ export default async function render(url: string) {
     </Shell>
   );
 
-  // convert the web ReadableStream to Nodejs Readable, pipe it throw the
-  // tanstack router transform and convert it back to a web ReadableStream
-  // if we can convert between web and node streams,
-
-  // we should prob use the pipeable streams api for react dom server to avoid
-  // having to copy a load of data every request (does it work like that?)
   const transform = transformStreamWithRouter(router);
-  const streamWithRouterData = Readable.fromWeb(stream).pipe(transform);
-  return Transform.toWeb(streamWithRouterData).readable;
+  const streamWithRouterData = stream.pipe(transform);
+  // this is probably fine
+  return Transform.toWeb(streamWithRouterData).readable as ReadableStream;
 }
