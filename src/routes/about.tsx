@@ -1,6 +1,6 @@
 import { Link, Route } from "@tanstack/react-router";
 import { rootRoute } from "./root";
-import { trpc } from "../trpc";
+import { trpc } from "../lib/trpc";
 
 export const aboutRoute = new Route({
   getParentRoute: () => rootRoute,
@@ -11,12 +11,12 @@ export const aboutRoute = new Route({
     });
   },
   loader: ({ context }) => {
-    return context.client.hello.query();
+    return context.queryUtils.hello.ensureData();
   },
   component: () => {
     const initialData = aboutRoute.useLoaderData();
 
-    const query = trpc.hello.useQuery(undefined, {
+    const [data] = trpc.hello.useSuspenseQuery(undefined, {
       initialData,
     });
 
@@ -24,7 +24,7 @@ export const aboutRoute = new Route({
       <>
         <h1>About</h1>
         <p>This is the about page.</p>
-        <p>{query.data}</p>
+        <p>{data}</p>
         <Link to="/">Go Home</Link>
       </>
     );

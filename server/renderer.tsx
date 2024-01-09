@@ -3,16 +3,22 @@ import {
   StartServer,
   transformStreamWithRouter,
 } from "@tanstack/react-router-server/server";
-import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import React from "react";
 import { createHeadCore } from "unhead";
 import { createRouter } from "../src/router";
 import { AppRouter } from "./trpc";
 // @ts-expect-error idk
 import manifest from "#vono/manifest";
+import { createTRPCQueryUtils } from "@trpc/react-query";
+import { Context as HonoContext } from "hono";
 import { renderToPipeableStream } from "react-dom/server";
 import { Transform } from "stream";
-import { Context as HonoContext } from "hono";
+import {
+  createLinks,
+  createQueryClient,
+  createTRPCClient,
+} from "../src/lib/trpc";
+import { getCookie } from "hono/cookie";
 
 const dev = true;
 
@@ -49,9 +55,23 @@ const Shell = (props: {
 
 export async function render(ctx: HonoContext) {
   const url = ctx.req.path;
+  const queryClient = createQueryClient();
+  const trpcClient = createTRPCClient(
+    createLinks(() => {
+      const authCookie = getCookie(ctx, "auth");
+
+      return {
+        cookie: `auth=${authCookie ?? ""}`,
+      };
+    })
+  );
 
   const head = createHeadCore();
-  const router = createRouter(head);
+  const router = createRouter({
+    head,
+    queryClient,
+    trpcClient,
+  });
 
   const memoryHistory = createMemoryHistory({
     initialEntries: [url],
@@ -63,14 +83,9 @@ export async function render(ctx: HonoContext) {
       updateHead: (metadata) => {
         head.push(metadata);
       },
-      client: createTRPCClient<AppRouter>({
-        links: [
-          httpBatchLink({
-            url: "http://localhost:5173/trpc",
-
-            // later read cookies here
-          }),
-        ],
+      queryUtils: createTRPCQueryUtils<AppRouter>({
+        queryClient,
+        client: trpcClient,
       }),
     },
   });

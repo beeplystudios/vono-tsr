@@ -9,6 +9,7 @@ hono.use(
   "/trpc/*",
   trpcServer({
     router: appRouter,
+    
   })
 );
 

@@ -1,5 +1,5 @@
 import { Link, Route } from "@tanstack/react-router";
-import { trpc } from "../trpc";
+import { trpc } from "../lib/trpc";
 import { rootRoute } from "./root";
 
 export const indexRoute = new Route({
@@ -17,13 +17,11 @@ export const indexRoute = new Route({
     });
   },
   loader: ({ context }) => {
-    return context.client.hello.query();
+    return context.queryUtils.hello.ensureData();
   },
   component: () => {
-    const initialData = indexRoute.useLoaderData();
-
-    const [data] = trpc.hello.useSuspenseQuery(undefined, {
-      initialData,
+    const { data } = trpc.hello.useQuery(undefined, {
+      initialData: indexRoute.useLoaderData(),
     });
 
     const utils = trpc.useUtils();

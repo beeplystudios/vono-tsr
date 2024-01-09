@@ -1,15 +1,16 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 import { Router } from "@tanstack/react-router";
-import { createTRPCClient, httpBatchLink } from "@trpc/client";
+import { createTRPCClient } from "@trpc/client";
+import { createTRPCQueryUtils } from "@trpc/react-query";
 import { type Head } from "@unhead/schema";
 import { whitelistSafeInput } from "@unhead/shared";
 import { type createHead } from "unhead";
 import { type AppRouter } from "../server/trpc";
+import { QueryProviders } from "./lib/trpc";
 import { indexRoute } from "./routes";
 import { aboutRoute } from "./routes/about";
 import { rootRoute } from "./routes/root";
 import { streamingRoute } from "./routes/streaming";
-import { trpc } from "./trpc";
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -17,48 +18,30 @@ const routeTree = rootRoute.addChildren([
   streamingRoute,
 ]);
 
-export const createRouter = (head: ReturnType<typeof createHead<Head>>) => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        refetchOnMount: (query) => (query.state.data ? false : "always"),
-      },
-    },
-  });
-
-  const trpcClient = createTRPCClient<AppRouter>({
-    links: [
-      httpBatchLink({
-        url: "http://localhost:5173/trpc",
-      }),
-    ],
-  });
-  const trpcReactClient = trpc.createClient({
-    links: [
-      httpBatchLink({
-        url: "http://localhost:5173/trpc",
-      }),
-    ],
-  });
-
+export const createRouter = (opts: {
+  head: ReturnType<typeof createHead<Head>>;
+  queryClient: QueryClient;
+  trpcClient: ReturnType<typeof createTRPCClient<AppRouter>>;
+}) => {
   return new Router({
     routeTree,
     context: {
       updateHead: (metadata) => {
-        head.push(metadata, {
+        opts.head.push(metadata, {
           // @ts-expect-error blame unhead
           transform: whitelistSafeInput,
         });
       },
-      client: trpcClient,
+      queryUtils: createTRPCQueryUtils<AppRouter>({
+        client: opts.trpcClient,
+        queryClient: opts.queryClient,
+      }),
     },
     Wrap: (props) => {
       return (
-        <trpc.Provider client={trpcReactClient} queryClient={queryClient}>
-          <QueryClientProvider client={queryClient}>
-            {props.children}
-          </QueryClientProvider>
-        </trpc.Provider>
+        <QueryProviders queryClient={opts.queryClient}>
+          {props.children}
+        </QueryProviders>
       );
     },
     defaultPreloadStaleTime: 0,

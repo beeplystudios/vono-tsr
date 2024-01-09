@@ -11,7 +11,7 @@ export const streamingRoute = new Route({
     });
   },
   loader: async ({ context }) => {
-    const promise = context.client.long.query();
+    const promise = context.queryUtils.long.ensureData();
     return {
       promise: defer(promise),
     };
