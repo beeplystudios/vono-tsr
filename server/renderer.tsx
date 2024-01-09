@@ -48,7 +48,11 @@ const Shell = (props: {
 );
 
 export async function render(ctx: HonoContext) {
+<<<<<<< HEAD
   const url = ctx.req.path;
+=======
+  const url = ctx.req.url;
+>>>>>>> 9e91dac5a06a2b05a433f9a8c0cda9c526d6d8d2
 
   const head = createHeadCore();
   const router = createRouter(head);
