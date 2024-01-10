@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import vono from "@gaiiaa/vono";
+import vono from "@vonojs/vono";
 
 // https://vitejs.dev/config/
 export default defineConfig({

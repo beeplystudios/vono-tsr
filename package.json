@@ -10,7 +10,6 @@
     "preview": "cd dist && node entry.js 5173"
   },
   "dependencies": {
-    "@gaiiaa/vono": "^0.0.5",
     "@hono/trpc-server": "^0.1.0",
     "@tanstack/react-query": "^5.17.9",
     "@tanstack/react-router": "^1.1.9",
@@ -18,6 +17,7 @@
     "@trpc/client": "^11.0.0-next-alpha.156",
     "@trpc/react-query": "^11.0.0-next-alpha.156",
     "@trpc/server": "^11.0.0-next-alpha.156",
+    "@vonojs/vono": "^0.0.7",
     "hono": "^3.12.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

@@ -377,19 +377,6 @@
   resolved "https://registry.yarnpkg.com/@gaiiaa/logger/-/logger-0.1.5.tgz#55fce0a67c9bb09594f844c76c2d2a0c542bed2b"
   integrity sha512-PqTmZ6cXkY18jlrmc0qPI2L+9NOGGC0GgCQZazWaIWowgo6R4fxhcdu4vqtYE2+EzltjfHwOeILztbnPbq3C9w==
 
-"@gaiiaa/vono@^0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@gaiiaa/vono/-/vono-0.0.5.tgz#062d5f37a82fd0401569e80ac987d8f69c4b72a6"
-  integrity sha512-9qOaX1VP+cFNve35W8F14tlAn+8roEfqUg3pW36ZOYBlLO2i2Pv9ZGgOEGwU4mfnvvEFofhmcf7hgj9JJb0zFA==
-  dependencies:
-    "@gaiiaa/assert" "^0.0.11"
-    "@gaiiaa/logger" "^0.1.5"
-    "@hono/node-server" "^1.3.3"
-    pathe "^1.1.1"
-    rollup-plugin-url-resolve "^0.2.0"
-    set-cookie-parser "^2.6.0"
-    unenv "^1.8.0"
-
 "@gar/promisify@^1.0.1":
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/@gar/promisify/-/promisify-1.1.3.tgz#555193ab2e3bb3b6adc3d551c9c030d9e860daf6"
@@ -854,6 +841,19 @@
     "@babel/plugin-transform-react-jsx-source" "^7.23.3"
     "@types/babel__core" "^7.20.5"
     react-refresh "^0.14.0"
+
+"@vonojs/vono@^0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@vonojs/vono/-/vono-0.0.7.tgz#720c7c0164dba0a9c86c1a17719108711fff15e6"
+  integrity sha512-hrPAWk0MLaI80H/OAmrQd4Jaef57KiR5O5faAM3PS9bzfPvT0MKonjzuoDTbB7r4vmeZ+uKYdocZ3z6hL+2/dA==
+  dependencies:
+    "@gaiiaa/assert" "^0.0.11"
+    "@gaiiaa/logger" "^0.1.5"
+    "@hono/node-server" "^1.3.3"
+    pathe "^1.1.1"
+    rollup-plugin-url-resolve "^0.2.0"
+    set-cookie-parser "^2.6.0"
+    unenv "^1.8.0"
 
 acorn-jsx@^5.3.2:
   version "5.3.2"
