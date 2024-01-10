@@ -1,7 +1,6 @@
 import { trpcServer } from "@hono/trpc-server";
 import { Hono } from "hono";
 import { appRouter } from "./trpc";
-import { render } from "./renderer";
 
 const hono = new Hono();
 
@@ -13,6 +12,7 @@ hono.use(
 );
 
 hono.get("/*", async (ctx) => {
+  const render = await import("./renderer").then((m) => m.render); 
   const stream = await render(ctx);
 
   return ctx.body(stream, {
